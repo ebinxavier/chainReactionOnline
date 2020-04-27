@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create / Join</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+        <img style="width: 100%;" src="./logo.png">
+        <!-- <input placeholder="Your Name" type="text" id="name" class="textInput" name="name"> -->
+        <br/>
+        <br/>
+        <br/>
+        <input placeholder="Room Id" type="text" id="roomId" class="textInput" name="roomId">
+        <div id="buttons">
+            <button id="start" style="display: none;" onclick="start()" class="myButton">Start</button>
+            <button id="join" style="display: none;" onclick="joinRoom()" class="myButton">Join</button>
+            <a href="/" class="myButton">Home</a>
+        </div>
+        <div id="roomId">
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+</body>
+</html>
+<script>
+    const socket = io();
+    function getQueryParam(name){
+        var value="";
+        location.search.split('&').forEach(item=>{
+            if(item.indexOf(name)!==-1){
+                value = item.split(name+'=')[1]
+            }
+        })
+        return value;
+    }
+
+    function joinRoom(){
+        // var name = document.getElementById('name').value;
+        var roomId = document.getElementById('roomId').value;
+        location.href= "/game?roomId="+roomId+"&name="+name;
+    }
+
+    // document.getElementById('name').value = getQueryParam('name');
+    document.getElementById('roomId').value = getQueryParam('roomId');
+    if(getQueryParam('host')=== 'true'){
+        document.getElementById('start').style.display="unset";
+    } else {
+        document.getElementById('join').style.display="unset";
+    }
+
+
+
+</script>
+
+<style>
+    body{
+        background: black;
+        color: white;
+        text-align: center;
+        font-family: 'Roboto', sans-serif;
+        margin: 50px;
+    }
+
+    .textInput{
+        width: 90%;
+        height: 9vw;
+        font-size: 8vw;
+        border-radius: 5px;
+        background: #272727;
+        color: floralwhite;
+        font-weight: bold;
+        text-align: center;
+    }
+    .myButton {
+        margin: 5vh 1vh;
+        box-shadow: 0px 1px 0px 0px #1c1b18;
+        background:linear-gradient(to bottom, #eae0c2 5%, #ccc2a6 100%);
+        background-color:#eae0c2;
+        border-radius:15px;
+        border:2px solid #333029;
+        display:inline-block;
+        cursor:pointer;
+        color:#505739;
+        font-family:Arial;
+        font-size:9vw;
+        font-weight:bold;
+        padding:12px 16px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #ffffff;
+    }
+    .myButton:hover {
+        background:linear-gradient(to bottom, #ccc2a6 5%, #eae0c2 100%);
+        background-color:#ccc2a6;
+    }
+    .myButton:active {
+        position:relative;
+        top:1px;
+    }
+</style>
