@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+var cors = require('cors');
+
+app.use(cors())
 
 let roomId = 1167;
 
