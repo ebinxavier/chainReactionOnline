@@ -22,12 +22,35 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('data',{data:data});
     })
 
-    socket.on('subscribe', function(room, cb) { 
+    socket.on('subscribe', function({roomId:room, name}, cb) { 
         console.log('joining room', room);
         socket.join(room); 
         var count = io.sockets.adapter.rooms[room].length;
-        cb({count: count});
-        console.log('room.length', count)
+        var error = false;
+       
+        if(!roomsDetails[room]) roomsDetails[room]=[];
+        
+        if(roomsDetails[room].includes(name)){
+            userIndex = roomsDetails[room].indexOf(name)+1; // Existing user
+        } else{
+            userIndex = count;
+            roomsDetails[room].push(name); // Updating Connected user per room
+        }
+        if(count !== roomsDetails[room].length){
+            error = true;
+        }
+
+        const roomDetails = {
+            error:error,
+            count: count, 
+            users: roomsDetails[room], 
+            userIndex: userIndex
+        };
+        console.log('room.length', count, name, roomsDetails)
+        cb(roomDetails); // Respond back total users in the group
+        
+        socket.broadcast.to(room).emit('newUserJoined', roomDetails);
+        
     })
 
     socket.on('unsubscribe', function(room) {  
