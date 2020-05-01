@@ -262,7 +262,6 @@ async function addNewAtom(x,y, color, breakingOut = false){ // Adds the atom to 
                     board[x][y].forEach(e=>scene.remove(e));
                     board[x][y] = [];
                     var neighours = getNeighbours(x,y);
-                    debugger
                     neighours.forEach(e=>{
                         addNewAtom(...e, color, {x: x * w - width/2, y:y * w - height/2 })
                     });
