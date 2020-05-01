@@ -72,9 +72,10 @@ io.on('connection', (socket) => {
         
     })
 
-    socket.on('unSubscribe', function(room) {  
-        console.log('leaving room', room);
-        socket.leave(room); 
+    socket.on('unSubscribe', function({roomId, playersName}) {  
+        console.log('leaving room', roomId, playersName);
+        socket.leave(roomId); 
+        socket.broadcast.to(roomId).emit('someOneLeft', playersName);
     })
 
     socket.on('keepAlive', function({user, room}) {  
@@ -83,28 +84,27 @@ io.on('connection', (socket) => {
             roomsDetails[room].lastCommunicated[user] = moment().valueOf();
     })
 
-
-
     socket.on('start', function(data) {
         socket.broadcast.to(data.room).emit('start', data);
     });
 
-    var c=5;
     socket.on('playerClickedOneCell', function(data, ack) {
         console.log('sending message');
-        // if(c<0){
         roomsDetails[data.room].history.push(data.message);
         console.log('history', roomsDetails[data.room].history)
         ack({status:'success', message:'Received in server'})
         data.historySequence = roomsDetails[data.room].history.length;
         socket.broadcast.to(data.room).emit('playerClickedOneCell', data);
-        // }
-        // c--;
     });
 
-    socket.on('getHistory', function({roomId}, response){
-        response(roomsDetails[roomId].history);
+    socket.on('getHistoryCount', function({roomId}, response){
+        response(roomsDetails[roomId]?roomsDetails[roomId].history.length:0);
     })
+
+    socket.on('getHistory', function({roomId}, response){
+        response(roomsDetails[roomId]?roomsDetails[roomId].history:[]);
+    })
+
     socket.on('disconnect', function(){
         console.log('user disconnected');
     });
